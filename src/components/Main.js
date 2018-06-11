@@ -15,33 +15,27 @@ class Todolist extends React.Component {
   }
   render() {
     return (
-      <div className="list-group" >
+      <div className='list-group' >
         <ul>
           {this.props.items.map((item) => (
             <li key={item.id}>
-              <a className="finish" onClick={this.finish.bind(this,item)} >V</a>
-              <a className="close" onClick={this.close.bind(this,item)} >X</a>
+              <a className={item.isFinished?'finished':'finish'} onClick={this.props.onToggleFinish.bind(this,item)} >V</a>
+              <a className='close' onClick={this.props.onCloseItem.bind(this,item)} >X</a>
 
-              {item.text}
+              <span style={{textDecoration:item.isFinished?'line-through':'none'}}>{item.text}</span>
+              {/* <span style='text-decoration:{'line-through':item.isFinished}'>{item.text}</span> */}
             </li>
           ))}
         </ul>
       </div>
     );
   }
-  close(item){
-    this.props.onCloseItem(item);
-  }
-  finish(item){
-    console.log('data');
-    
-  }
 }
 class Add extends React.Component {
   render() {
     return (
-      <div className="add-group">
-        <input type="text" />
+      <div className='add-group'>
+        <input type='text' />
         <button>add</button>
       </div>
     );
@@ -54,13 +48,16 @@ class AppComponent extends React.Component {
     this.state = {
       items: [{
         text:'haode',
-        id:123
+        id:123,
+        isFinished:!1
       }, {
           text: '11',
-          id: 1234
+          id: 1234,
+          isFinished:!1
         }, {
           text: '22',
-          id: 1235
+          id: 1235,
+          isFinished:!1
         }],
       text: ''
     }
@@ -69,13 +66,14 @@ class AppComponent extends React.Component {
     return (
       <div className='index'>
         <h1>todolist</h1>
-        <div className="add-group">
-          <input type="text" onKeyUp={this.keyUp.bind(this)}
+        <div className='add-group'>
+          <input type='text' onKeyUp={this.keyUp.bind(this)}
           onChange= {this.handleChange.bind(this)} value={ this.state.text }/>
           <button 
           onClick= {this.handleAdd.bind(this)}>add #{this.state.items.length+1}</button>
         </div>
-        <Todolist items={ this.state.items } onCloseItem={this.closeItem.bind(this)}/>
+
+        <Todolist items={ this.state.items } onToggleFinish={this.toggleFinish.bind(this)} onCloseItem={this.closeItem.bind(this)}/>
       
       </div>
     );
@@ -106,10 +104,18 @@ class AppComponent extends React.Component {
   closeItem(item) {
     let idd =item.id;
     this.setState(prevState => ({
-      // items: prevState.items.map(v => item.id != v.id)
-      items: prevState.items.splice(prevState.items.findIndex(v => idd = v.id),1)
+      items: prevState.items.filter(v => idd != v.id)
     }));
-   
+  }
+  //完成
+  toggleFinish(item) {
+    let idd =item.id;
+    this.setState(prevState => ({
+      items: prevState.items.map(v => {
+        idd == v.id&&(v.isFinished=!v.isFinished);
+        return v
+      })
+    }));
   }
 }
 

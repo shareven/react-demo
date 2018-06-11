@@ -32,3 +32,8 @@ body {
     color: green;
     cursor: pointer;
 }
+.finished {
+    margin-right: 20px;
+    color: #aaa;
+    cursor: pointer;
+}
